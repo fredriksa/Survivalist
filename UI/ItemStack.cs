@@ -137,6 +137,14 @@ public partial class ItemStack : MonoBehaviour {
         return maxSize;
     }
 
+    public Item getFirstItem()
+    {
+        if (items.Count > 0)
+            return items[0];
+
+        return null;
+    }
+
     private void free()
     {
         itemEntry = -1;

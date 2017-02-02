@@ -23,7 +23,7 @@ public class ActionBar : MonoBehaviour {
 
 	void Update ()
     {
-		foreach (KeyValuePair<KeyCode, GameObject> pair in buttonsDict)
+        foreach (KeyValuePair<KeyCode, GameObject> pair in buttonsDict)
             if (Input.GetKeyDown(pair.Key))
                 OnKeyPress(pair.Value);
 	}
@@ -31,7 +31,20 @@ public class ActionBar : MonoBehaviour {
     private void OnKeyPress(GameObject button)
     {
         ItemStack stack = button.GetComponentInChildren<ItemStack>();
-        if (stack)
-            //stack.OnActionbarA
+        GameObject player = ObjectHelper.getParentGameObject(gameObject, "Player");
+        if (stack && player && stack.getFirstItem())
+           ItemActivateHandler.OnActivate(stack.getFirstItem(), player);
+
+        ActionbarButton actionButton = button.GetComponent<ActionbarButton>();
+        actionButton.OnActivate();
+
+        DeactiveButtons(button);
+    }
+
+    private void DeactiveButtons(GameObject button)
+    {
+        foreach (GameObject btn in buttons)
+            if (btn != button)
+                btn.GetComponent<ActionbarButton>().OnReset();
     }
 }

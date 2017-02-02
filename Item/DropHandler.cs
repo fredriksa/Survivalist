@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-class DropHandler : MonoBehaviour
+class DropHandler
 {
     public static float dropSpeedForward = 200;
     //Returning false from either one of the hooks will interrupt the dropping process

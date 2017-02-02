@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Flags]
 public enum ItemFlags
 {
     INTERACTABLE = 1,
     LOOTABLE = 2
+}
+
+[System.Flags]
+public enum ActivateFlags
+{
+    USE = 1
 }
 
 [RequireComponent(typeof(DatabaseItem))]
@@ -13,15 +20,33 @@ public class Item : MonoBehaviour {
     public int GUID;
     public string itemName;
     public Sprite icon;
+
     public ItemFlags flags;
+    public ActivateFlags activateFlags;
 
     private static int itemCounter = 0;
 
-    void Start()
+    public void Awake()
     {
         itemCounter++;
         GUID = itemCounter;
         flags = ItemFlags.INTERACTABLE | ItemFlags.LOOTABLE;
+        activateFlags = ActivateFlags.USE;
+    }
+
+    public bool OnActivate(GameObject player)
+    {
+        if (!FlagHelper.IsSet(flags, ItemFlags.INTERACTABLE)) return false;
+
+        if (FlagHelper.IsSet(activateFlags, ActivateFlags.USE)) return OnUse();
+
+        return true;
+    }
+
+    public bool OnUse()
+    {
+        Debug.Log("Just used");
+        return true;
     }
 
     public bool WhileInteractionLook(GameObject player)

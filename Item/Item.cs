@@ -21,7 +21,9 @@ public class Item : MonoBehaviour {
     public string itemName;
     public Sprite icon;
 
+    [EnumFlag]
     public ItemFlags flags;
+    [EnumFlag]
     public ActivateFlags activateFlags;
 
     private static int itemCounter = 0;

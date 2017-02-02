@@ -6,6 +6,7 @@ public class ActionBar : MonoBehaviour {
 
     public List<KeyCode> keys;
     public List<GameObject> buttons;
+    public GameObject activeButton;
 
     private Dictionary<KeyCode, GameObject> buttonsDict = new Dictionary<KeyCode, GameObject>();
 
@@ -26,6 +27,8 @@ public class ActionBar : MonoBehaviour {
         foreach (KeyValuePair<KeyCode, GameObject> pair in buttonsDict)
             if (Input.GetKeyDown(pair.Key))
                 OnKeyPress(pair.Value);
+
+        disableInactive();
 	}
 
     private void OnKeyPress(GameObject button)
@@ -37,6 +40,7 @@ public class ActionBar : MonoBehaviour {
 
         ActionbarButton actionButton = button.GetComponent<ActionbarButton>();
         actionButton.OnActivate();
+        activeButton = button;
 
         DeactiveButtons(button);
     }
@@ -46,5 +50,16 @@ public class ActionBar : MonoBehaviour {
         foreach (GameObject btn in buttons)
             if (btn != button)
                 btn.GetComponent<ActionbarButton>().OnReset();
+    }
+
+    private void disableInactive()
+    {
+        foreach (GameObject btn in buttons)
+        {
+            ActionbarButton aBtn = btn.GetComponent<ActionbarButton>();
+            ItemStack stack = btn.GetComponentInChildren<ItemStack>();
+            if (aBtn && stack && !stack.isUsed())
+                aBtn.OnReset();
+        }
     }
 }

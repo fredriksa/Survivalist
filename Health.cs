@@ -13,4 +13,12 @@ public class Health : MonoBehaviour
     public float getMaxHealth() { return maxHealth; }
 
     public void modHealth(float mod) { health -= mod; }
+
+    public void heal(float healthAmount)
+    {
+        if (health + healthAmount > maxHealth)
+            health = maxHealth;
+        else
+            health += healthAmount;
+    }
 }

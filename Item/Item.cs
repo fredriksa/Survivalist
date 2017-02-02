@@ -38,12 +38,12 @@ public class Item : MonoBehaviour {
     {
         if (!FlagHelper.IsSet(flags, ItemFlags.INTERACTABLE)) return false;
 
-        if (FlagHelper.IsSet(activateFlags, ActivateFlags.USE)) return OnUse();
+        if (FlagHelper.IsSet(activateFlags, ActivateFlags.USE)) return OnUse(player);
 
         return true;
     }
 
-    public bool OnUse()
+    public virtual bool OnUse(GameObject player)
     {
         Debug.Log("Just used");
         return true;

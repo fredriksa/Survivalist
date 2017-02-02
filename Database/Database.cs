@@ -30,6 +30,19 @@ public class Database : MonoBehaviour {
         //Returns default value of generic type, e.g null for nullable, 0 for integers etc.
         return null;
     }
+
+    public int fetchId(GameObject gobject)
+    {
+        foreach (GameObject obj in content)
+        {
+            //if ()
+            //{
+            //    return obj.GetComponent<DatabaseItem>().getId();
+            //}
+        }
+
+        return -1;
+    }
 }
 
 

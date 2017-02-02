@@ -32,8 +32,6 @@ public class Item : MonoBehaviour {
     {
         itemCounter++;
         GUID = itemCounter;
-        flags = ItemFlags.INTERACTABLE | ItemFlags.LOOTABLE;
-        activateFlags = ActivateFlags.USE;
     }
 
     public bool OnActivate(GameObject player)
@@ -64,7 +62,7 @@ public class Item : MonoBehaviour {
         if (FlagHelper.IsSet(flags, ItemFlags.LOOTABLE))
         {
             OnLootStart(player);
-            LootHandler.OnLoot(this, player);
+            LootHandler.OnLoot(this.gameObject, player);
             OnLootEnd(player);
         }
 

@@ -4,17 +4,17 @@ using UnityEngine;
 
 class LootHandler : MonoBehaviour
 {
-    static public void OnLoot(Item item, GameObject player)
+    static public void OnLoot(GameObject item, GameObject player)
     {
         Inventory inventory = player.GetComponent<Inventory>();
         if (!inventory) return;
 
-        Database itemDatabase = GameObject.FindGameObjectWithTag("ItemDatabase").GetComponent<Database>();
-        int itemEntry = 2;//item.getEntry();
-        GameObject targetItem = itemDatabase.fetch(itemEntry);
-        inventory.addItem(targetItem.GetComponent<Item>());
-        Destroy(item.gameObject);
 
-        UIHandler.Instance.announce("Looted " + item.itemName);
+        Database itemDatabase = GameObject.FindGameObjectWithTag("ItemDatabase").GetComponent<Database>();
+        //We need to reference the prefab in the database as we're shortly after destroying the item gameobject
+        GameObject targetItem = itemDatabase.fetch(item.GetComponent<Item>().getEntry());
+        inventory.addItem(targetItem.GetComponent<Item>());
+        UIHandler.Instance.announce("Looted " + targetItem.GetComponent<Item>().itemName);
+        Destroy(item);
     }
 }

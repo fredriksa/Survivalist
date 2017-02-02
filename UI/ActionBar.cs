@@ -29,7 +29,10 @@ public class ActionBar : MonoBehaviour {
                 OnKeyPress(pair.Value);
 
         disableInactive();
-	}
+
+        if (Input.GetKeyDown(KeyCode.Q) && activeButton)
+            DropHandler.Drop(activeButton.GetComponentInChildren<ItemStack>(), ObjectHelper.getParentGameObject(activeButton, "Player"));
+    }
 
     private void OnKeyPress(GameObject button)
     {

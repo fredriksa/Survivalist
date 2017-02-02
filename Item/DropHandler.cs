@@ -5,6 +5,16 @@ using UnityEngine;
 class DropHandler
 {
     public static float dropSpeedForward = 200;
+
+    static public bool Drop(ItemStack stack, GameObject player)
+    {
+        if (!DropHandler.OnDropBegin(stack, player)) return false;
+        if (!DropHandler.OnDrop(stack, player)) return false;
+        if (!DropHandler.OnDropEnd(stack, player)) return false;
+
+        return true;
+    }
+
     //Returning false from either one of the hooks will interrupt the dropping process
     static public bool OnDrop(ItemStack stack, GameObject player)
     {

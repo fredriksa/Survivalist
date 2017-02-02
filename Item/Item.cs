@@ -45,7 +45,6 @@ public class Item : MonoBehaviour {
 
     public virtual bool OnUse(GameObject player)
     {
-        Debug.Log("Just used");
         return true;
     }
 

@@ -77,7 +77,6 @@ public partial class ItemStack : MonoBehaviour {
         return true;
     }
 
-    //Kanske inte funkar som tänkt, kanske inte shiftar index..
     public List<Item> removeFirst(int amount = 1)
     {
         if (amount < 1) return null;

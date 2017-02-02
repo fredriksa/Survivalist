@@ -13,6 +13,8 @@ class FoodItem : Item
 
         health.heal(heal);
 
+        UIHandler.Instance.announceEvent("+" + heal.ToString() + " Health From " + itemName);
+
         player.GetComponent<Inventory>().removeItem(this);
 
         return true;

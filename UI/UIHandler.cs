@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class UIHandler : MonoBehaviour {
     public static GameObject announcementObj;
+    public static GameObject eventAnnouncementObj;
+
     private static readonly UIHandler instance = new UIHandler(); 
 
     private UIHandler() { } //Prevent instantiation
@@ -12,6 +14,9 @@ public class UIHandler : MonoBehaviour {
     {
         announcementObj = GameObject.FindGameObjectWithTag("AnnouncementObject");
         announcementObj.SetActive(false);
+
+        eventAnnouncementObj = GameObject.FindGameObjectWithTag("EventAnnouncementObject");
+        eventAnnouncementObj.SetActive(false);
     }
 
     public static UIHandler Instance
@@ -22,19 +27,26 @@ public class UIHandler : MonoBehaviour {
         }
     }
 
-    public void announce(string message, Sprite icon = null)
+    public void announceEvent(string message, Sprite icon = null)
     {
-        if (announcementObj == null) return;
-
-
-        if (icon != null)
-            ObjectHelper.getChildGameObject(announcementObj, "Image").GetComponent<Image>().sprite = icon;
-
-        ObjectHelper.getChildGameObject(announcementObj, "Text").GetComponent<Text>().text = message;
-
-        announcementObj.SetActive(true);
-        announcementObj.GetComponent<FadeInOut>().fade(1, 1.5f, 1);
+        announceFor(eventAnnouncementObj, message, icon);
     }
 
-   
+    public void announce(string message, Sprite icon = null)
+    {
+        announceFor(announcementObj, message, icon);
+    }
+
+    private void announceFor(GameObject obj, string message, Sprite icon = null)
+    {
+        if (obj == null) return;
+
+        if (icon != null)
+            ObjectHelper.getChildGameObject(obj, "Image").GetComponent<Image>().sprite = icon;
+
+        ObjectHelper.getChildGameObject(obj, "Text").GetComponent<Text>().text = message;
+
+        obj.SetActive(true);
+        obj.GetComponent<FadeInOut>().fade(1, 1.5f, 1);
+    }
 }

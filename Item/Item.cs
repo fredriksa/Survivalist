@@ -48,6 +48,11 @@ public class Item : MonoBehaviour {
         return true;
     }
 
+    public virtual bool OnStopUse(GameObject player)
+    {
+        return true;
+    }
+
     public bool WhileInteractionLook(GameObject player)
     {
         if (!FlagHelper.IsSet(flags, ItemFlags.INTERACTABLE)) return false;

@@ -14,7 +14,7 @@ class LootHandler : MonoBehaviour
         //We need to reference the prefab in the database as we're shortly after destroying the item gameobject
         GameObject targetItem = itemDatabase.fetch(item.GetComponent<Item>().getEntry());
         inventory.addItem(targetItem.GetComponent<Item>());
-        UIHandler.Instance.announceEvent("O B T A I N E D " + targetItem.GetComponent<Item>().itemName);
+        UIHandler.Instance.announceEvent("OBTAINED " + targetItem.GetComponent<Item>().itemName);
         Destroy(item);
     }
 }

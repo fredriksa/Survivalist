@@ -16,6 +16,14 @@ public class ObjectHelper : MonoBehaviour {
         return findTransformWithName(ts, withName);
     }
 
+    static public Vector3 getSizeFromRenderer(GameObject fromGameObject)
+    {
+        Renderer renderer = fromGameObject.GetComponent<Renderer>();
+        if (!renderer) return Vector3.zero;
+
+        return renderer.bounds.size;
+    }
+
     static private GameObject findTransformWithName(Transform[] transforms, string withName)
     {
         foreach (Transform t in transforms) if (t.gameObject.name == withName) return t.gameObject;

@@ -11,7 +11,8 @@ public class BuildingSystem : MonoBehaviour {
     public float placementDistance = 7;
     public float rotationSpeed = 3;
 
-    public Material activeMaterial;
+    public Material activeValidMaterial;
+    public Material activeInvalidMaterial;
 
     private GameObject spawnedObj;
     private Material originalMaterial;
@@ -22,27 +23,82 @@ public class BuildingSystem : MonoBehaviour {
         if (!headCamera)
             Debug.LogWarning("BuildingSystem: Camera is not set for " + gameObject.name);
 
-        if (!activeMaterial)
+        if (!activeValidMaterial)
             Debug.LogWarning("BuildingSystem: Active material is not set for " + gameObject.name);
 
-        Color color = activeMaterial.color;
+        Color color = activeValidMaterial.color;
         color.a = 0.6f;
-        activeMaterial.color = color;
+        activeValidMaterial.color = color;
+
+        //Color colorInactive = activeInvalidMaterial.color;
+        //colorInactive.a = 0.6f;
+        //activeInvalidMaterial.color = colorInactive;
     }
 	
 	void Update ()
     {
         if (headCamera == null || spawnedObj == null) return;
 
+        BuildModeFlags buildMode = spawnedObj.GetComponent<BuildItem>().buildModeFlags;
+        if (FlagHelper.IsSet(buildMode, BuildModeFlags.FREE))
+            freeBuild();
+        else
+            pointBuild();
+    }
+
+    public void freeBuild()
+    {
         RaycastHit hit;
         Ray ray = CameraRay();
 
         if (Physics.Raycast(ray, out hit, placementDistance))
             OnGroundContact(hit);
 
+        RotateObj();
         ModifyHeightObj();
-        //Need to check if we object we are placing actually is colliding
         OnPlace();
+    }
+
+    public void pointBuild()
+    {
+        RotateObj();
+
+        RaycastHit hit;
+        Ray ray = CameraRay();
+
+        Vector3 point;
+        if (Physics.Raycast(ray, out hit, placementDistance))
+            point = hit.point;
+        else
+            point = ray.GetPoint(placementDistance);
+
+        bool hitSnapPoint = false;
+        if (Physics.Raycast(ray, out hit, placementDistance, LayerMask.NameToLayer("BuildingSnapPoint"))) hitSnapPoint = true;
+
+        Vector3 newPos = Vector3.zero;
+        if (hitSnapPoint)
+        {
+            newPos = hit.point;
+            spawnedObj.GetComponent<Renderer>().material = activeValidMaterial;
+        }
+
+        if (!hitSnapPoint)
+        {
+            spawnedObj.GetComponent<Renderer>().material = activeInvalidMaterial;
+
+            if (Physics.Raycast(ray, out hit, placementDistance))
+                newPos = hit.point;
+            else
+                newPos = ray.GetPoint(placementDistance);
+        }
+
+        if (!spawnedObj.GetComponent<BuildSnapping>().hasSnapped)
+            spawnedObj.transform.position = newPos + new Vector3(0, ObjectHelper.getSizeFromRenderer(spawnedObj).y/2, 0);
+        else
+        {
+            spawnedObj.GetComponent<Renderer>().material = activeValidMaterial;
+            OnPlace();
+        }
     }
 
     public void build(GameObject obj)
@@ -58,62 +114,22 @@ public class BuildingSystem : MonoBehaviour {
         originalLayer = spawnedObj.layer;
         spawnedObj.layer = LayerMask.NameToLayer("Ignore Raycast");
         originalMaterial = spawnedObj.GetComponent<Renderer>().material;
-        spawnedObj.GetComponent<Renderer>().material = activeMaterial;
-        spawnedObj.AddComponent<BuildSnapping>();
+        spawnedObj.GetComponent<Renderer>().material = activeValidMaterial;
+
+        if (FlagHelper.IsSet(spawnedObj.GetComponent<BuildItem>().buildModeFlags, BuildModeFlags.POINTBASED))
+        {
+            spawnedObj.GetComponent<Renderer>().material = activeInvalidMaterial;
+            spawnedObj.AddComponent<BuildSnapping>();
+        }
     }
 
     private void OnGroundContact(RaycastHit hit)
     {
         if (!Input.GetKey(heightModifierKey))
-            spawnedObj.transform.position = hit.point;// + new Vector3(0, GetSpawnedObjModifiers().y, 0);
-
-        RotateObj();
+            spawnedObj.transform.position = hit.point + new Vector3(0, ObjectHelper.getSizeFromRenderer(spawnedObj).y, 0);
 
         if (Input.GetKeyDown(alignRotationKey))
             AlignRotation(hit);
-        /*
-        //Transform the hit point to local point and nomralize it's direction
-        Vector3 localPoint = hit.transform.InverseTransformPoint(hit.point);
-        Vector3 localDir = localPoint.normalized;
-
-        float upDot = Vector3.Dot(localDir, Vector3.up);
-        float forwardDot = Vector3.Dot(localDir, Vector3.forward);
-        float rightDot = Vector3.Dot(localDir, Vector3.right);
-
-        float upPower = Mathf.Abs(upDot);
-        float forwardPower = Mathf.Abs(forwardDot);
-        float rightPower = Mathf.Abs(rightDot);
-
-        Vector3 offset = Vector3.zero;
-
-        //Right or left collision
-        if (rightPower > forwardPower)
-        {
-            if (rightDot > 0)
-            {
-                offset.x = GetSpawnedObjModifiers().x;
-                Debug.Log("Right");
-            }
-            else
-            {
-                offset.x = -GetSpawnedObjModifiers().x;
-                Debug.Log("Left");
-            }
-        }
-
-
-        //Front or back collision
-        if (forwardPower > rightPower)
-        { 
-            //Forward
-            if (forwardDot > 0)
-                offset.z = GetSpawnedObjModifiers().z;
-            else
-                offset.z = -GetSpawnedObjModifiers().z;
-        }
-
-        offset.y = GetSpawnedObjModifiers().y; //Always spawn obj ontop of looking point
-        //spawnedObj.transform.position += offset;*/
     }
 
     private void OnPlace()
@@ -131,7 +147,11 @@ public class BuildingSystem : MonoBehaviour {
 
     private void systemReset()
     {
-        Destroy(spawnedObj.GetComponent<BuildSnapping>());
+        if (FlagHelper.IsSet(spawnedObj.GetComponent<BuildItem>().buildModeFlags, BuildModeFlags.POINTBASED))
+        {
+            Destroy(spawnedObj.GetComponent<BuildSnapping>());
+        }
+
         spawnedObj = null;
     }
 
@@ -185,13 +205,5 @@ public class BuildingSystem : MonoBehaviour {
     private Ray CameraRay()
     {
         return headCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, headCamera.nearClipPlane));
-    }
-
-    private Vector3 GetSpawnedObjModifiers()
-    {
-        Renderer renderer = spawnedObj.GetComponent<Renderer>();
-        if (!renderer) return Vector3.zero;
-
-        return new Vector3(renderer.bounds.size.x / 2, renderer.bounds.size.y / 2, renderer.bounds.size.z / 2);
     }
 }

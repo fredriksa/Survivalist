@@ -4,6 +4,7 @@ using UnityEngine;
 
 class BuildSnappingPoint : MonoBehaviour
 {
+    //Vector3 forward, left, right etc.
     public Vector3 modifier = Vector3.one;
     public bool isOccupied = false;
 
@@ -22,8 +23,7 @@ class BuildSnappingPoint : MonoBehaviour
         other.transform.rotation = transform.rotation;
 
         Vector3 size = ObjectHelper.getSizeFromRenderer(other.gameObject);
-        float dist = size.x < size.z ? size.x : size.z;
-        dist /= 2; //Adjust for center
+        float dist = size.x / 2;
         other.transform.Translate(modifier * dist);
 
         snapping.hasSnapped = true;

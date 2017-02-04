@@ -18,10 +18,15 @@ public class ObjectHelper : MonoBehaviour {
 
     static public Vector3 getSizeFromRenderer(GameObject fromGameObject)
     {
+        Quaternion initialRotation = fromGameObject.transform.rotation;
+        fromGameObject.transform.rotation = Quaternion.identity;
+
         Renderer renderer = fromGameObject.GetComponent<Renderer>();
         if (!renderer) return Vector3.zero;
+        Vector3 size = renderer.bounds.size;
 
-        return renderer.bounds.size;
+        fromGameObject.transform.rotation = initialRotation;
+        return size;
     }
 
     static private GameObject findTransformWithName(Transform[] transforms, string withName)

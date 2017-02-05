@@ -35,7 +35,11 @@ public class UnlockableBuildSnappingPoint : BuildSnappingPoint {
 
         if (!unlocked)
         {
+            if (FlagHelper.IsSet(buildItemTypeFlags, BuildItemType.NONE))
+                buildItemTypeFlags &= ~(BuildItemType.NONE);
+
             buildItemTypeFlags |= typesToUnlock;
+
             unlocked = true;
         }
 

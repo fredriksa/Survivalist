@@ -12,9 +12,10 @@ public enum BuildModeFlags
 [System.Flags]
 public enum BuildItemType
 {
-    BASEPLATFORM = 1,
-    WALL = 2,
-    PILLAR = 3,
+    NONE = 1,
+    BASEPLATFORM = 2,
+    WALL = 3,
+    PILLAR = 4
 }
 
 class BuildItem : Item

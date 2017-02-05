@@ -38,6 +38,9 @@ public class BuildSnappingPoint : MonoBehaviour
         if (buildItemTypeFlags == 0)
             return true;
 
+        if (buildItemTypeFlags == BuildItemType.NONE)
+            return false;
+
         BuildItemType flagResult = item.buildItemTypeFlags & buildItemTypeFlags;
         if (flagResult <= 0)
             return false;

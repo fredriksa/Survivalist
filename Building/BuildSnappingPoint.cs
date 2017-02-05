@@ -13,24 +13,22 @@ public class BuildSnappingPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        BuildSnapping snapping = other.gameObject.GetComponent<BuildSnapping>();
-        if (!snapping || isOccupied() || snapping.isSnapping() || !isCorrectType(other))
+        if (!canSnap(other) || !isCorrectType(other))
             return;
 
+        BuildSnapping snapping = other.gameObject.GetComponent<BuildSnapping>();
         snappedObject = other.gameObject;
         snapping.activePoint = this;
     }
 
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    BuildSnapping snapping = other.gameObject.GetComponent<BuildSnapping>();
-    //    if (!snapping) return;
+    /*private void OnTriggerExit(Collider other)
+    {
+        BuildSnapping snapping = other.gameObject.GetComponent<BuildSnapping>();
+        if (!snapping) return;
 
-    //    snappedObject = other.gameObject;
-    //    snapping.activePoint = null;
-    //
-
-    //}
+        snappedObject = other.gameObject;
+        snapping.activePoint = null;
+    }*/
 
     public bool isCorrectType(Collider other)
     {
@@ -42,6 +40,15 @@ public class BuildSnappingPoint : MonoBehaviour
 
         BuildItemType flagResult = item.buildItemTypeFlags & buildItemTypeFlags;
         if (flagResult <= 0)
+            return false;
+
+        return true;
+    }
+
+    public virtual bool canSnap(Collider other)
+    {
+        BuildSnapping snapping = other.gameObject.GetComponent<BuildSnapping>();
+        if (!snapping || isOccupied() || snapping.isSnapping())
             return false;
 
         return true;

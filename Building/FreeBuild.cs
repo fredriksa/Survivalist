@@ -10,8 +10,4 @@ public class FreeBuild : BuildMode {
         canRotate = true;
         canAlignRotation = true;
     }
-
-	public override void update () {
-        base.update();
-	}
 }

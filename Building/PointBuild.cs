@@ -9,7 +9,9 @@ public class PointBuild : BuildMode {
     public PointBuild() 
         : base()
     {
- 
+        canRotate = true;
+        canRotateSideways = true;
+        canAlignRotation = true;
     }
 
     public override void update()
@@ -41,6 +43,14 @@ public class PointBuild : BuildMode {
     {
         Destroy(buildSnapping);
         base.modeReset();
+    }
+
+    public override void resetSpawnedObject()
+    {
+        base.resetSpawnedObject();
+
+        if (buildSnapping)
+            Destroy(buildSnapping);
     }
 
     public override void OnActiveRayContact(RaycastHit hit)

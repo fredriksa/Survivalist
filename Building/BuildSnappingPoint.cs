@@ -11,7 +11,7 @@ public class BuildSnappingPoint : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         BuildSnapping snapping = other.gameObject.GetComponent<BuildSnapping>();
-        if (!snapping || isOccupied()) return;
+        if (!snapping || isOccupied() || snapping.isSnapping()) return;
 
         snappedObject = other.gameObject;
         snapping.activePoint = this;

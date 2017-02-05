@@ -95,6 +95,18 @@ public class BuildMode : MonoBehaviour {
         return !canUpdate();
     }
 
+    public virtual void interrupt()
+    {
+        destroyActiveObject();
+    }
+
+    public virtual void resetSpawnedObject()
+    {
+        fixAttributes();
+    }
+
+    public void setSpawnedObj(GameObject obj) { spawnedObj = obj; }
+    public GameObject getSpawnedObj() { return spawnedObj; }
 
     protected void OnActiveRayNoContact()
     {
@@ -133,14 +145,18 @@ public class BuildMode : MonoBehaviour {
     protected void onPlace()
     {
         if (!canPlace || !Input.GetKey(KeyCode.Mouse0)) return;
-
-        spawnedObj.GetComponent<Collider>().isTrigger = false;
-        spawnedObj.layer = originalLayer;
-        spawnedObj.GetComponent<Renderer>().material = originalMaterial;
+        fixAttributes();
 
         UIHandler.Instance.announceEvent("CONSTRUCTED " + spawnedObj.GetComponent<BuildItem>().itemName);
 
         modeReset();
+    }
+
+    protected void fixAttributes()
+    {
+        spawnedObj.GetComponent<Collider>().isTrigger = false;
+        spawnedObj.layer = originalLayer;
+        spawnedObj.GetComponent<Renderer>().material = originalMaterial;
     }
 
     protected virtual void modeReset()
@@ -150,7 +166,8 @@ public class BuildMode : MonoBehaviour {
 
     protected virtual bool canUpdate()
     {
-        if (headCamera == null || spawnedObj == null) return false;
+        if (headCamera == null || spawnedObj == null)
+            return false;
 
         return true;
     }

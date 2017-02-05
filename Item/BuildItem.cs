@@ -13,6 +13,8 @@ class BuildItem : Item
 {
     [EnumFlag]
     public BuildModeFlags buildModeFlags;
+    [EnumFlag]
+    public BuildModeFlags supportedBuildModeFlags;
 
     private GameObject player;
 

@@ -9,13 +9,15 @@ public class BuildingSystem : MonoBehaviour {
     public KeyCode alignRotationKey = KeyCode.Mouse1;
     public KeyCode rotationModifierKey = KeyCode.LeftControl;
     public KeyCode heightModifierKey = KeyCode.LeftShift;
-    public float placementDistance = 7;
+    public float placementDistance = 4;
     public float rotationSpeed = 3;
 
     public Material activeValidMaterial;
     public Material activeInvalidMaterial;
 
     private BuildMode buildMode = new FreeBuild();
+    private BuildModeFlags buildModeFlag = BuildModeFlags.FREE;
+    private GameObject prefabObj;
 
 	void Start ()
     {
@@ -26,6 +28,27 @@ public class BuildingSystem : MonoBehaviour {
             Debug.LogWarning("BuildingSystem: Active material is not set for " + gameObject.name);
 
         prepareMaterials();
+    }
+
+
+    void Update()
+    {
+        buildMode.update();
+
+        if (Input.GetKeyDown(KeyCode.C))
+            buildMode.interrupt();
+
+        if (Input.GetKeyDown(KeyCode.X))
+            toggleBuildMode();
+    }
+
+
+    public void build(GameObject obj)
+    {
+        buildMode.interrupt();
+        setBuildMode(obj);
+        buildMode.spawn(obj, transform.position, transform.rotation);
+        buildMode.prepare();
     }
 
     private void prepareMaterials()
@@ -41,11 +64,50 @@ public class BuildingSystem : MonoBehaviour {
 
     private void setBuildMode(GameObject prefab)
     {
+        prefabObj = prefab;
         if (FlagHelper.IsSet(prefab.GetComponent<BuildItem>().buildModeFlags, BuildModeFlags.FREE))
+        {
             buildMode = new FreeBuild();
+            buildModeFlag = BuildModeFlags.FREE;
+        }
         else if (FlagHelper.IsSet(prefab.GetComponent<BuildItem>().buildModeFlags, BuildModeFlags.POINTBASED))
+        {
             buildMode = new PointBuild();
+            buildModeFlag = BuildModeFlags.POINTBASED;
+        }
 
+        prepareBuildMode();
+    }
+
+    private void toggleBuildMode()
+    {
+        if (!canToggleBuildMode()) return;
+
+        BuildMode oldMode = buildMode;
+
+        string announceText = string.Empty;
+        if (buildModeFlag == BuildModeFlags.FREE)
+        {
+            buildMode = new PointBuild();
+            buildModeFlag = BuildModeFlags.POINTBASED;
+            announceText = "POINTBASED";
+        } else if (buildModeFlag == BuildModeFlags.POINTBASED)
+        {
+            buildMode = new FreeBuild();
+            buildModeFlag = BuildModeFlags.FREE;
+            announceText = "FREE";
+        }
+
+        UIHandler.Instance.announceEvent("BUILDMODE: " + announceText);
+
+        oldMode.resetSpawnedObject();
+        buildMode.setSpawnedObj(oldMode.getSpawnedObj());
+        buildMode.prepare();
+        prepareBuildMode();
+    }
+
+    private void prepareBuildMode()
+    {
         buildMode.activeInvalidMaterial = activeInvalidMaterial;
         buildMode.activeValidMaterial = activeValidMaterial;
         buildMode.placementDistance = placementDistance;
@@ -53,18 +115,14 @@ public class BuildingSystem : MonoBehaviour {
         buildMode.rotationSpeed = rotationSpeed;
     }
 
-    void Update ()
+    private bool canToggleBuildMode()
     {
-        buildMode.update();
-    }
+        BuildItem buildItem = prefabObj.GetComponent<BuildItem>();
 
-    public void build(GameObject obj)
-    {
-        if (buildMode.isBuilding())
-            buildMode.destroyActiveObject();
+        if (FlagHelper.IsSet(buildItem.supportedBuildModeFlags, BuildModeFlags.FREE))
+            if (FlagHelper.IsSet(buildItem.supportedBuildModeFlags, BuildModeFlags.POINTBASED))
+                return true;
 
-        setBuildMode(obj);
-        buildMode.spawn(obj, transform.position, transform.rotation);
-        buildMode.prepare();
+        return false;
     }
 }

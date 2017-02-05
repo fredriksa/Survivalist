@@ -9,12 +9,22 @@ public enum BuildModeFlags
     POINTBASED = 2
 }
 
+[System.Flags]
+public enum BuildItemType
+{
+    BASEPLATFORM = 1,
+    WALL = 2,
+    PILLAR = 3,
+}
+
 class BuildItem : Item
 {
     [EnumFlag]
     public BuildModeFlags buildModeFlags;
     [EnumFlag]
     public BuildModeFlags supportedBuildModeFlags;
+    [EnumFlag]
+    public BuildItemType buildItemTypeFlags;
 
     private GameObject player;
 

@@ -7,6 +7,7 @@ public class BuildSnappingPoint : MonoBehaviour
     //Vector3 forward, left, right etc.
     public Vector3 modifier = Vector3.one;
     public GameObject snappedObject;
+    public GameObject snapPoint;
 
     [EnumFlag]
     public BuildItemType buildItemTypeFlags;

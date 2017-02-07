@@ -23,9 +23,25 @@ public class UnlockableBuildSnappingPoint : BuildSnappingPoint {
 
     private bool hasRequirements(Collider other)
     {
-        if (isCorrectType(other))
+        if (!isRequiredPointsOccupied())
+        {
+            if (unlocked)
+                lockPoint();
+
+            return false;
+        }
+
+        if (unlocked && isCorrectType(other))
             return true;
 
+        if (!unlocked)
+            unlockPoint();
+
+        return true;
+    }
+
+    private bool isRequiredPointsOccupied()
+    {
         foreach (GameObject snapPoint in requiredSnappingPoints)
         {
             BuildSnappingPoint point = snapPoint.GetComponent<BuildSnappingPoint>();
@@ -33,16 +49,24 @@ public class UnlockableBuildSnappingPoint : BuildSnappingPoint {
                 return false;
         }
 
-        if (!unlocked)
-        {
-            if (FlagHelper.IsSet(buildItemTypeFlags, BuildItemType.NONE))
-                buildItemTypeFlags &= ~(BuildItemType.NONE);
-
-            buildItemTypeFlags |= typesToUnlock;
-
-            unlocked = true;
-        }
-
         return true;
+
+    }
+
+    private void lockPoint()
+    {
+        buildItemTypeFlags &= ~(typesToUnlock);
+
+        unlocked = false;
+    }
+
+    private void unlockPoint()
+    {
+        if (FlagHelper.IsSet(buildItemTypeFlags, BuildItemType.NONE))
+            buildItemTypeFlags &= ~(BuildItemType.NONE);
+
+        buildItemTypeFlags |= typesToUnlock;
+
+        unlocked = true;
     }
 }

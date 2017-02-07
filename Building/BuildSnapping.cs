@@ -22,15 +22,25 @@ public class BuildSnapping : MonoBehaviour
     {
         Vector3 newPos = Vector3.zero;
 
-        newPos.x = activePoint.transform.position.x;
-        newPos.y = activePoint.transform.position.y + ObjectHelper.getSizeFromRenderer(gameObject).y / 2;
-        newPos.z = activePoint.transform.position.z;
+        Transform positionSource = getPositionSource();
+
+        newPos.x = positionSource.position.x;
+        newPos.y = positionSource.position.y + ObjectHelper.getSizeFromRenderer(gameObject).y / 2;
+        newPos.z = positionSource.position.z;
 
         gameObject.transform.position = newPos;
-        gameObject.transform.rotation = activePoint.transform.rotation;
+        gameObject.transform.rotation = positionSource.rotation;
 
         Vector3 size = ObjectHelper.getSizeFromRenderer(gameObject.gameObject);
         float dist = size.x / 2;
         gameObject.transform.Translate(activePoint.modifier * dist);
+    }
+
+    private Transform getPositionSource()
+    {
+        if (activePoint.snapPoint)
+            return activePoint.snapPoint.transform;
+
+        return activePoint.transform;
     }
 }

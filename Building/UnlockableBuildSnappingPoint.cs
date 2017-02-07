@@ -23,19 +23,17 @@ public class UnlockableBuildSnappingPoint : BuildSnappingPoint {
 
     private bool hasRequirements(Collider other)
     {
-        if (!isRequiredPointsOccupied())
+        if (isRequiredPointsOccupied())
         {
-            if (unlocked)
-                lockPoint();
-
-            return false;
+            if (!unlocked)
+                unlockPoint();
+        } else if (unlocked)
+        {
+            lockPoint();
         }
 
-        if (unlocked && isCorrectType(other))
+        if (isCorrectType(other))
             return true;
-
-        if (!unlocked)
-            unlockPoint();
 
         return true;
     }
@@ -56,6 +54,7 @@ public class UnlockableBuildSnappingPoint : BuildSnappingPoint {
     private void lockPoint()
     {
         buildItemTypeFlags &= ~(typesToUnlock);
+        buildItemTypeFlags |= BuildItemType.NONE;
 
         unlocked = false;
     }

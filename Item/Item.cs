@@ -43,6 +43,11 @@ public class Item : MonoBehaviour {
         return true;
     }
 
+    public bool OnInactive(GameObject player)
+    {
+        return OnStopUse(player);
+    }
+
     public virtual bool OnUse(GameObject player)
     {
         return true;

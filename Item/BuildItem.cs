@@ -38,7 +38,9 @@ class BuildItem : Item
 
     public override bool OnStopUse(GameObject playerObj)
     {
-        //Implement functionality so this "hook" gets triggered
+        BuildingSystem buildingSystem = playerObj.GetComponent<BuildingSystem>();
+        buildingSystem.buildmode.interrupt();
+
         return true;
     }
 }

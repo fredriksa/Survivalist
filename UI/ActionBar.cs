@@ -39,7 +39,7 @@ public class ActionBar : MonoBehaviour {
         ItemStack stack = button.GetComponentInChildren<ItemStack>();
         GameObject player = ObjectHelper.getParentGameObject(gameObject, "Player");
         if (stack && player && stack.getFirstItem())
-           ItemActivateHandler.OnActivate(stack.getFirstItem(), player);
+           ItemHandler.OnActive(stack.getFirstItem(), player);
 
         ActionbarButton actionButton = button.GetComponent<ActionbarButton>();
         actionButton.OnActivate();

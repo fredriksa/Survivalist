@@ -30,7 +30,6 @@ public class BuildingSystem : MonoBehaviour {
         prepareMaterials();
     }
 
-
     void Update()
     {
         buildMode.update();
@@ -42,7 +41,6 @@ public class BuildingSystem : MonoBehaviour {
             toggleBuildMode();
     }
 
-
     public void build(GameObject obj)
     {
         buildMode.interrupt();
@@ -50,6 +48,8 @@ public class BuildingSystem : MonoBehaviour {
         buildMode.spawn(obj, transform.position, transform.rotation);
         buildMode.prepare();
     }
+
+    public BuildMode buildmode { get { return buildMode; } }
 
     private void prepareMaterials()
     {

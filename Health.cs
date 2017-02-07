@@ -4,21 +4,17 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+   [SerializeField]
+    private float mMaxHealth = 100;
     [SerializeField]
-    private float maxHealth = 100;
-    [SerializeField]
-    private float health = 0;
+    private float mHealth = 0;
 
-    public float getHealth() { return health; }
-    public float getMaxHealth() { return maxHealth; }
-
-    public void modHealth(float mod) { health -= mod; }
+    public float health { get { return mHealth; } }
+    public float maxHealth { get { return mMaxHealth; } }
 
     public void heal(float healthAmount)
     {
-        if (health + healthAmount > maxHealth)
-            health = maxHealth;
-        else
-            health += healthAmount;
+        mHealth += healthAmount;
+        Mathf.Clamp(mHealth, 0f, mHealth);
     }
 }

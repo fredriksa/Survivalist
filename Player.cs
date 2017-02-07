@@ -14,12 +14,12 @@ public class Player : MonoBehaviour {
             Health health = GetComponent<Health>();
 
             if (healthText)
-                healthText.text = health.getHealth().ToString() + " / " + health.getMaxHealth();
+                healthText.text = health.health.ToString() + " / " + health.maxHealth;
 
             if (healthBarScaler)
             {
-                healthBarScaler.value = health.getHealth();
-                healthBarScaler.maxValue = health.getMaxHealth();
+                healthBarScaler.value = health.health;
+                healthBarScaler.maxValue = health.maxHealth;
             }
         }
 	}
